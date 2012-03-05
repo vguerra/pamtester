@@ -1,0 +1,106 @@
+dnl $Id: configure.in,v 1.6 2005/06/19 15:38:48 moriyoshi Exp $
+
+AC_PREREQ(2.50)
+AC_INIT(pamtester, 0.1.2)
+AM_INIT_AUTOMAKE(pamtester, 0.1.2)
+AC_CONFIG_SRCDIR([src/pamtester.c])
+AM_CONFIG_HEADER(config.h)
+AM_MAINTAINER_MODE
+
+AC_SUBST(PACKAGE_VERSION)
+AC_SUBST(PACKAGE_NAME)
+AC_SUBST(PACKAGE_TARNAME)
+
+# Checks for programs.
+AC_PROG_CC
+AC_PROG_LN_S
+AC_PROG_INSTALL
+AC_PROG_LIBTOOL
+
+AC_ARG_WITH([pam], [  --with-pam=PREFIX       specify PAM installation prefix], [
+  pam_INCLUDES="-I$withval/include"
+  pam_LIBS="-L$withval/lib"
+])
+
+AC_ARG_WITH([pam], [  --with-pam-includes=DIR specify PAM header location], [
+  pam_INCLUDES="-I$withval"
+])
+
+AC_ARG_WITH([pam], [  --with-pam-libs=DIR     specify PAM header location], [
+  pam_LIBS="-L$withval"
+])
+
+ac_save_LIBS="$LIBS"
+LIBS="$LIBS $pam_LIBS"
+AC_CHECK_LIB([pam], [pam_start], [
+  pam_LIBS="$pam_LIBS -lpam"
+  LIBS="$LIBS -lpam"
+])
+
+misc_conv_avail=
+
+ac_save_CPPFLAGS="$CPPFLAGS"
+CPPFLAGS="$CPPFLAGS $pam_INCLUDES"
+AC_CHECK_HEADERS([pam/pam_misc.h security/pam_misc.h pam_misc.h], [
+  AC_CHECK_LIB([pam_misc], [misc_conv], [
+    AC_DEFINE([HAVE_MISC_CONV], [1], [Define to 1 if you have the `misc_conv()' fucntion])
+    pam_LIBS="$pam_LIBS -lpam_misc"
+    LIBS="LIBS -lpam_misc"
+    misc_conv_avail=1
+  ])
+])
+
+if test -z "$misc_conv_avail"; then
+  AC_CHECK_HEADERS([termios.h])
+fi
+
+AC_CHECK_HEADERS([pam/pam_appl.h], [
+  pam_appl_h="pam/pam_appl.h"
+])
+
+AC_CHECK_HEADERS([security/pam_appl.h], [
+  pam_appl_h="security/pam_appl.h"
+])
+
+AC_CHECK_HEADERS([pam_appl.h], [
+  pam_appl_h="pam_appl.h"
+])
+
+AC_MSG_CHECKING([if the second argument of pam_conv.conv() takes const pointer])
+ac_save_CFLAGS="$CFLAGS"
+CFLAGS="-Wall -Werror $CFLAGS"
+AC_TRY_COMPILE([
+#include <$pam_appl_h>
+], [
+  int (*conv)(int num_msg, const struct pam_message **msg,
+      struct pam_response **resp, void *appdata_ptr) = NULL;
+  struct pam_conv c = { conv, NULL };
+  c.conv = NULL;
+], [
+  AC_MSG_RESULT(yes)
+  AC_DEFINE([PAM_CONV_CONST], [const], [Define to `const' if the 2nd arg of pam_conv.conv takes const pointer.])
+], [
+  AC_MSG_RESULT(no)
+  AC_DEFINE([PAM_CONV_CONST], [], [Define to `const' if the 2nd arg of pam_conv.conv takes const pointer.])
+])
+CFLAGS="$ac_save_CFLAGS"
+CPPFLAGS="$ac_save_CPPFLAGS"
+LIBS="$ac_save_LIBS"
+
+INCLUDES="$INCLUDES $pam_INCLUDES"
+LIBS="$LIBS $pam_LIBS"
+AC_SUBST(INCLUDES)
+
+# Checks for header files.
+AC_HEADER_STDC
+AC_CHECK_HEADERS([string.h unistd.h memory.h errno.h])
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_C_CONST
+AC_TYPE_SIZE_T
+
+# Checks for library functions.
+AC_CHECK_FUNCS([memset strcasecmp strchr strncasecmp strtol strtoul malloc realloc])
+
+AC_CONFIG_FILES([Makefile src/Makefile doc/Makefile doc/pamtester.1])
+AC_OUTPUT

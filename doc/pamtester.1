@@ -1,0 +1,97 @@
+.\" $Id: pamtester.1.in,v 1.2 2005/04/03 06:20:17 moriyoshi Exp $
+.TH PAMTESTER "1" "March 2005" "pamtester 0.1.2"
+.SH NAME
+pamtester - test pluggable authentication module (PAM) facility
+.SH SYNOPSIS
+.B pamtester
+[\-v] [\-I \fIitem\fR=\fIvalue\fR] [\-E \fIvar\fR=\fIvalue\fR] \fIservice\fR \fIuser\fR \fIoperation\fR [\fIoperation\fR ...]
+.SH DESCRIPTION
+Test pluggable authentication module (PAM) facility.
+.PP
+\fIservice\fR is the PAM service name. \fIuser\fR is the name of the user account to operate with the PAM facility. The following operations are supported.
+.TP
+authenticate
+Authenticate \fIuser\fR. A conversation may subsequently take place to prompt
+user input to retrieve necessary authentication information.
+.TP
+acct_mgmt
+Perform account management on \fIuser\fR.
+A conversation may subsequently take place to prompt user input for necessary
+authentication information.
+.TP
+open_session
+Open a new session for \fIuser\fR.
+.TP
+close_session
+Close the current session for \fIuser\fR.
+.TP
+chauthtok
+Change the authentication token currently assigned to \fIuser\fR.
+Conversation may subsequently take place to prompt user input for necessary
+authentication information.
+.PP
+Note that some operations may eventually need additional privileges to
+fulfill the request depending on the service configuration.
+.PP
+Any operation may also be followed by the option flags that are provided
+between the pair of parenthesis. Flags are all named and combinable or
+inversible with bitwise operators; "|" (OR), "&" (AND), "^" (XOR) and "~" (NOT)
+are accepted.
+.IP
+authenticate(PAM_SILENT | PAM_DISALLOW_NULL_AUTHTOK)
+.PP
+The list of allowed options is shown below:
+.IP - 2
+PAM_SILENT
+.IP -
+PAM_DISALLOW_NULL_AUTHTOK
+.IP -
+PAM_ESTABLISH_CRED
+.IP -
+PAM_REINITIALIZE_CRED
+.IP -
+PAM_REFRESH_CRED
+.IP -
+PAM_CHANGE_EXPIRED_AUTHTOK
+.PP
+Additional authentication information such as the name of the remote user,
+the remote host and the tty can be supplied via \fI\-I\fR (\fI\-\^\-item\fR)
+option.
+.PP
+The following types of information are supported:
+.IP - 2
+service
+.IP -
+user
+.IP -
+prompt
+.IP -
+tty
+.IP -
+ruser
+.IP -
+rhost
+
+.SH OPTIONS
+.TP
+\fB\-v\fR, \fB\-\^\-verbose\fR
+Turn on verbose mode.
+.TP
+\fB\-I\fR \fIitem\fR=\fIvalue\fR, \fB\-\^\-item\fR \fIitem\fR=\fIvalue\fR
+Provide additional information to authentication module.
+.TP
+\fB\-E\fR \fIvar\fR=\fIvalue\fR, \fB\-\^\-env\fR \fIvar\fR=\fIvalue\fR
+Set environment variable \fIvar\fR to \fIvalue\fR
+.SH AUTHOR
+Written by Moriyoshi Koizumi <moriyoshi@users.sourceforge.net>
+.SH "REPORTING BUGS"
+Report bugs to <pamtester\-bugs@lists.sourceforge.net>.
+.SH COPYRIGHT
+Copyright \(co 2004 - 2005 Moriyoshi Koizumi. All rights reserved.
+.SH "SEE ALSO"
+.IR pam (7)
+.\" Local Variables:
+.\" mode: nroff
+.\" End:
+.\" 
+.\" vim: ft=roff

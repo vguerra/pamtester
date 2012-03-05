@@ -1,0 +1,30 @@
+2005-09-20  Moriyoshi Koizumi  <moriyoshi@users.sourceforge.net>
+
+	* app.c: (pamtester_app_run): fix the bug that the -I option wrongly
+	gives the name of the item to pam_set_item() rather than the value of
+	the item.
+
+2005-06-20  Moriyoshi Koizumi  <moriyoshi@users.sourceforge.net>
+
+	* configure.in: add --with-pam, --with-pam-includes and --with-pam-libs
+	options that allow you to use an arbitrary pam implementation installed
+	anywhere.
+
+2005-06-12  Moriyoshi Koizumi  <moriyoshi@users.sourceforge.net>
+
+	* configure.in: improve pam_misc detection for misc_conv() compatibility
+	issues.
+	* autogen.sh: run libtoolize prior to aclocal.
+	* app.c: (pamtester_app_run) initialize pamh by NULL in case pam_start()
+	fails. uninitialized pamh causes segfault on pam_end().
+	* compat.c: provide misc_conv() equivalent for platforms where such
+	convenience functions are not available.
+
+2005-03-29  Moriyoshi Koizumi  <moriyoshi@users.sourceforge.net>
+
+	* NEWS: added.
+	* Makefile.am: add NEWS to EXTRA_DIST.
+
+2005-03-28  Moriyoshi Koizumi  <moriyoshi@users.sourceforge.net>
+
+	* ALL: import to CVS. 

@@ -1,0 +1,17 @@
+pamtester 0.1.2  2005/9/20
+* Added --with-pam, --with-pam-includes and --with-pam-libs options that
+  allow you to use an arbitrary PAM implementation installed anywhere.
+* Fixed a bug in -I option that the name of the item is wrongly given to
+  pam_set_item() instead of the value.
+
+
+pamtester 0.1.1  2005/6/12
+* Support for platforms like Solaris which don't provide the pam_misc
+  convenience library.
+* Fixed segfault that occured when the initialisation of the PAM facility
+  failed.
+
+
+pamtester 0.1.0  2005/3/29
+
+* Initial release.
